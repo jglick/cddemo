@@ -3,6 +3,7 @@ package org.jenkinsci.plugins.workflow.demo;
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import java.net.URL;
 
@@ -10,15 +11,29 @@ import java.net.URL;
  * Integration test for webapp.
  */
 public class AppTest extends Assert {
+
+
     @Test
-    public void testApp() throws Exception {
+    @Category(SmokeTest.class)
+    public void smoke() throws Exception {
+        testApp(30*1000);
+    }
+
+    @Test
+    @Category(AcceptanceTest.class)
+    public void acceptance() throws Exception {
+        testApp(2*60*1000);
+    }
+
+
+    public void testApp(int duration) throws Exception {
         URL app = getSUT();
         String contents = IOUtils.toString(app.openStream());
         assertTrue(contents.contains("Hello Jenkins!"));
 
         // this is supposed to be an integration test,
         // let's take some time. We want this to be longer than the build for sure.
-        Thread.sleep(Integer.getInteger("duration", 30) * 1000);
+        Thread.sleep(duration);
     }
 
     private URL getSUT() throws Exception {
