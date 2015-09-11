@@ -16,13 +16,13 @@ public class AppTest extends Assert {
     @Test
     @Category(SmokeTest.class)
     public void smoke() throws Exception {
-        testApp(30*1000);
+        testApp(20*1000);
     }
 
     @Test
     @Category(AcceptanceTest.class)
     public void acceptance() throws Exception {
-        testApp(2*60*1000);
+        testApp(60*1000);
     }
 
 
