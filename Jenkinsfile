@@ -1,6 +1,7 @@
+#!groovy
 stage 'Dev'
 node {
-    git 'https://github.com/ndeloof/cddemo'
+    checkout scm
     sh "mvn clean package"
     dir('target') {stash name: 'war', includes: 'x.war'}
 }
@@ -15,13 +16,13 @@ node {
 parallel(
     smokeTests: {
         node {
-            git 'https://github.com/ndeloof/cddemo'
+            checkout scm
             sh "mvn test -f sometests -P smoke -Durl=http://localhost:8080/test"
         }
     }, 
     acceptanceTests: {
         node {
-            git 'https://github.com/ndeloof/cddemo'
+            checkout scm
             sh "mvn test -f sometests -P acceptance -Durl=http://localhost:8080/test"
         }
     }
