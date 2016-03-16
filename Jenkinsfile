@@ -2,7 +2,7 @@
 stage 'Dev'
 node {
     checkout scm
-    sh "mvn clean package"
+    mvn "clean package"
     dir('target') {stash name: 'war', includes: 'x.war'}
 }
 
@@ -17,13 +17,13 @@ parallel(
     smokeTests: {
         node {
             checkout scm
-            sh "mvn test -f sometests -P smoke -Durl=http://localhost:8080/test"
+            mvn "test -f sometests -P smoke -Durl=http://webserver:8080/test"
         }
     }, 
     acceptanceTests: {
         node {
             checkout scm
-            sh "mvn test -f sometests -P acceptance -Durl=http://localhost:8080/test"
+            mvn "test -f sometests -P acceptance -Durl=http://webserver:8080/test"
         }
     }
 )
@@ -35,7 +35,7 @@ node {
     sh "cp x.war /var/lib/jetty/webapps/staging.war"
 }    
 
-input message: "Does http://localhost:8080/staging/ look good?"
+input message: "Does http://webserver:8080/staging/ look good?"
 
 checkpoint('Before production')
 
@@ -44,3 +44,11 @@ node {
     unstash 'war'
     sh "cp x.war /var/lib/jetty/webapps/production.war"
 }    
+
+
+// my custom utility methods
+
+def mvn(args) {
+    sh "${tool 'maven (latest)'}/bin/mvn ${args}"
+}
+
